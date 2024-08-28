@@ -15,7 +15,7 @@ import json
 from utils.system_utils import searchForMaxIteration
 from scene.dataset_readers import sceneLoadTypeCallbacks
 from scene.gaussian_model import GaussianModel
-from scene.deform_model import DeformModel, DeformModelRF
+from scene.deform_model import SplatFieldsModel
 from arguments import ModelParams
 from utils.camera_utils import cameraList_from_camInfos, camera_to_JSON
 try:
@@ -108,19 +108,18 @@ class Scene:
         # else:
         #     assert False, "Could not recognize scene type!"
 
-        if True:
-            # with open(scene_info.ply_path, 'rb') as src_file, open(os.path.join(self.model_path, "input.ply"),
-            #                                                        'wb') as dest_file:
-            #     dest_file.write(src_file.read())
+        if not self.loaded_iter:
+            with open(scene_info.ply_path, 'rb') as src_file, open(os.path.join(self.model_path, "input.ply"),
+                                                                   'wb') as dest_file:
+                dest_file.write(src_file.read())
             json_cams = []
             camlist = []
-            camlist.extend([scene_info.test_cameras[25]]) # NOTE hardcoded 25th camera
-            # if scene_info.test_cameras:
-            #     camlist.extend(scene_info.test_cameras)
-            # if scene_info.pred_cameras:
-            #     camlist.extend(scene_info.pred_cameras)
-            # if scene_info.train_cameras:
-            #     camlist.extend(scene_info.train_cameras)
+            if scene_info.test_cameras:
+                camlist.extend(scene_info.test_cameras)
+            if scene_info.pred_cameras:
+                camlist.extend(scene_info.pred_cameras)
+            if scene_info.train_cameras:
+                camlist.extend(scene_info.train_cameras)
             for id, cam in enumerate(camlist):
                 json_cams.append(camera_to_JSON(id, cam))
             with open(os.path.join(self.model_path, "cameras.json"), 'w') as file:

@@ -2,8 +2,7 @@ import torch
 import numpy as np
 import os
 import yaml
-from scene import Scene, DeformModel
-from utils.general_utils import safe_state
+from scene import Scene, SplatFieldsModel
 from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args, ModelHiddenParams, OptimizationParams
 from gaussian_renderer import GaussianModel
@@ -154,7 +153,7 @@ def render_sets(dataset: ModelParams, hyper: ModelHiddenParams, iteration: int, 
     gaussians.use_isotropic = hyper.use_isotropic
     scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False)
     iteration = scene.loaded_iter
-    deform = DeformModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
+    deform = SplatFieldsModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
     deform.load_weights(dataset.model_path, iteration=iteration)
 
     view = scene.getTestCameras()[0]
@@ -262,6 +261,5 @@ if __name__ == "__main__":
     print("Rendering " + args.model_path)
 
     # Initialize system state (RNG)
-    safe_state(args.quiet)
 
     render_sets(model.extract(args), hp.extract(args), args.iteration, pipeline.extract(args), args.skip_train, args.skip_test, args.skip_pred, args.mode)

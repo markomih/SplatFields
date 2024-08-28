@@ -14,18 +14,17 @@ import numpy as np
 import os
 import torch
 from random import randint
-from utils.loss_utils import l1_loss, ssim, kl_divergence
-from gaussian_renderer import render, network_gui
+from utils.loss_utils import l1_loss, ssim
+from gaussian_renderer import render
 import sys
 import torch.nn.functional as F
-from scene import Scene, GaussianModel, DeformModel
-from utils.general_utils import safe_state, get_linear_noise_func
+from scene import Scene, GaussianModel, SplatFieldsModel
 import uuid
 from tqdm import tqdm
 from utils.image_utils import psnr
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams, ModelHiddenParams
-from extract_geo import query_nn, morans_measure, morans_loss
+from extract_geo import query_nn, morans_loss
 
 try:
     from torch.utils.tensorboard import SummaryWriter
@@ -110,7 +109,7 @@ def training(dataset, hyper, opt, pipe, testing_iterations, saving_iterations):
     gaussians.use_isotropic = hyper.use_isotropic
     ENABLE_G_OPT = not opt.disable_gaussian_opt #True
     scene = Scene(dataset, gaussians)
-    deform = DeformModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
+    deform = SplatFieldsModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
     deform.train_setting(opt)
 
     gaussians.training_setup(opt)
@@ -311,10 +310,6 @@ def training(dataset, hyper, opt, pipe, testing_iterations, saving_iterations):
                     size_threshold = 20 if iteration > opt.opacity_reset_interval else None
                     gaussians.densify_and_prune(opt.densify_grad_threshold, 0.005, scene.cameras_extent, size_threshold)
 
-                # if iteration % opt.opacity_reset_interval == 0 or (
-                #         dataset.white_background and iteration == opt.densify_from_iter):
-                #     gaussians.reset_opacity()
-
             # Optimizer step
             if iteration < opt.iterations:
                 if ENABLE_G_OPT:
@@ -462,7 +457,6 @@ if __name__ == "__main__":
     #                     default=[5000, 6000, 7_000] + list(range(10000, 40001, 1000)))
     parser.add_argument("--test_iterations", nargs="+", type=int, default=[i*1000 for i in range(0,120)] + [100_000, 200_000])
     parser.add_argument("--save_iterations", nargs="+", type=int, default=[100,500,1000] + [7_000, 10_000, 20_000, 30_000, 40_000, 100_000, 200_000])
-    parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--configs", type=str, default = "")
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)
@@ -475,7 +469,6 @@ if __name__ == "__main__":
     print("Optimizing " + args.model_path)
 
     # Initialize system state (RNG)
-    safe_state(args.quiet)
 
     # Start GUI server, configure and run training
     # network_gui.init(args.ip, args.port)
@@ -485,21 +478,3 @@ if __name__ == "__main__":
 
     # All done
     print("\nTraining complete.")
-# python train.py -s ../4DGaussians/data/dnerf/bouncingballs -m output/exp-name --eval --is_blender
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ -m output/DEBUG_rep --white_background --eval
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ -m output/repSe3 --white_background --eval --configs ./arguments/owlii/sequence_se3.py
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_dct.py --num_basis 8 -m output/repDCT8
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --num_basis 8 --flow_model dct_siren -m output/repDCT8_siren
-# 10
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_se3.py --load_time_step 10 -m output/10/repSe3
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_dct.py --num_basis 8 --load_time_step 10 -m output/10/repDCT8
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --num_basis 8 --flow_model dct_siren --load_time_step 10 -m output/10/repDCT8_siren
-
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_se3.py --load_time_step 100 -m output/100_all/repSe3
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_dct.py --num_basis 8 --load_time_step 100 -m output/100_all/repDCT8
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --num_basis 8 --flow_model dct_siren --load_time_step 100 -m output/100_all/repDCT8_siren
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --configs ./arguments/owlii/sequence_se3.py --load_time_step 100 -m output/100_all/repSe3_noNoise_allTr --all_training --train_cam_names cam_train_0 cam_train_1
-
-# 10 cma
-# python train.py -s ../ResFields/datasets/public_data/dancer_vox11/ --white_background --eval --load_time_step 1  -m output_rep/ST10/static_hull --all_training --train_cam_names cam_train_1 cam_train_3 cam_train_6 cam_train_8 cam_train_0 cam_train_2 cam_train_4 cam_train_5 cam_train_7 cam_train_9 --pts_samples hull --is_static --iterations 3000
-# render pred camera

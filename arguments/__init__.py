@@ -130,7 +130,6 @@ class ModelHiddenParams(ParamGroup):
         self.resfield_layers = []
 
         # version 2 arguments
-        self.use_model_v2 = False
         self.geo_model_disable_pts = False
         self.use_view_dep_rgb = False
         

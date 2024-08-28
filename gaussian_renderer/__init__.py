@@ -11,16 +11,8 @@
 
 import torch
 import math
-import os
-GPU_TYPE = os.environ.get('SLURM_GPUS', '').lower()
-if 'a100' in GPU_TYPE:
-    print('USING A100, importing Adiff_gaussian_rasterization...')
-    from Adiff_gaussian_rasterization import GaussianRasterizationSettings, GaussianRasterizer
-else:
-    from diff_gaussian_rasterization import GaussianRasterizationSettings, GaussianRasterizer
+from diff_gaussian_rasterization import GaussianRasterizationSettings, GaussianRasterizer
 from scene.gaussian_model import GaussianModel
-from utils.sh_utils import eval_sh
-# from utils.rigid_utils import from_homogenous, to_homogenous
 
 
 def quaternion_multiply(q1, q2):
@@ -35,8 +27,6 @@ def quaternion_multiply(q1, q2):
     return torch.stack((w, x, y, z), dim=-1)
 
 
-# def render(viewpoint_camera, pc: GaussianModel, means3D, pipe, bg_color: torch.Tensor, d_rotation, d_scaling,
-#            scaling_modifier=1.0, override_color=None, return_opacity=True):
 def render(viewpoint_camera, gaussian_dict: dict, pipe, bg_color: torch.Tensor, scaling_modifier=1.0, return_opacity=True):
     """
     Render the scene. 
