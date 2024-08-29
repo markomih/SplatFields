@@ -3,11 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 # from .decoders import VAEDecoder
-# from .time_decoders import TimeVAEDecoder
-try:
-    from mmgen.models import build_module
-except ImportError:
-    pass
+from .time_decoders import TimeVAEDecoder
+from mmgen.models import build_module
 
 class BaseModel(nn.Module):
     def __init__(self, config):

@@ -2,20 +2,20 @@ from typing import Optional
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-try:
-    from mmgen.models.builder import MODULES
-    # from diffusers.models.vae import Decoder
-    from diffusers.models.modeling_utils import ModelMixin
-    from mmcv.cnn.utils import constant_init, kaiming_init
-    from diffusers.models.resnet import ResnetBlock2D, Upsample2D
-    from diffusers.models.resnet import Upsample2D
-    from diffusers.models.attention_processor import Attention
-    from diffusers.models.vae import is_torch_version, get_activation
-    from diffusers.models.lora import LoRAConv2dLayer
-    from diffusers.utils import logging
-    logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
-except ImportError:
-    pass
+# try:
+from mmgen.models.builder import MODULES
+# from diffusers.models.vae import Decoder
+from diffusers.models.modeling_utils import ModelMixin
+from mmcv.cnn.utils import constant_init, kaiming_init
+from diffusers.models.resnet import ResnetBlock2D, Upsample2D
+from diffusers.models.resnet import Upsample2D
+from diffusers.models.attention_processor import Attention
+from diffusers.models.vae import is_torch_version, get_activation
+from diffusers.models.lora import LoRAConv2dLayer
+from diffusers.utils import logging
+logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
+# except ImportError:
+#     pass
 
 
 class TimeLoRACompatibleConv(nn.Conv2d):

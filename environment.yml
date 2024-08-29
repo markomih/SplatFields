@@ -1,0 +1,31 @@
+name: SplatFields
+channels:
+  - pytorch
+  - pyg
+  - conda-forge
+  - defaults
+dependencies:
+  - cudatoolkit=11.6
+  - plyfile=0.8.1
+  - python=3.7.13
+  - pip=22.3.1
+  - pytorch=1.12.1
+  - torchaudio=0.12.1
+  - torchvision=0.13.1
+  - tqdm
+  - pip:
+    - einops
+    - lpips
+    - laspy
+    - opencv-python
+    - trimesh
+    - imageio
+    - packaging
+    - scikit-learn
+    - imageio==2.31.2
+    - imageio-ffmpeg==0.4.9
+    - imagesize==1.4.1
+    - scikit-image==0.19.3
+    - diffusers==0.21.4
+    - mmcv==1.6.0
+    - mmcv-full==1.6.0

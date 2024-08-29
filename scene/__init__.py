@@ -18,10 +18,6 @@ from scene.gaussian_model import GaussianModel
 from scene.deform_model import SplatFieldsModel
 from arguments import ModelParams
 from utils.camera_utils import cameraList_from_camInfos, camera_to_JSON
-try:
-    from scene.time_decoders import TimeVAEDecoder
-except Exception:
-    pass
 
 
 class Scene:
