@@ -46,9 +46,10 @@ If you find our work helpful, please consider citing:
 @inproceedings{SplatFields,
    title={{SplatFields}: SplatFields: Neural Gaussian Splats for Sparse 3D and 4D Reconstruction},
    author={Mihajlovic, Marko and Prokudin, Sergey and Tang, Siyu and Maier, Robert and Bogo, Federica and Tung, Tony and Boyer, Edmond},
-   booktitle={ECCV},
-   year={2024}
-} 
+   booktitle={European Conference on Computer Vision (ECCV)},
+   year={2024},
+   organization={Springer}
+}
 ```
 
 ## LICENSE
