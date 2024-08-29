@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 import os
-import yaml
 from scene import Scene, SplatFieldsModel
 from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args, ModelHiddenParams, OptimizationParams
@@ -98,8 +97,8 @@ def get_gaussian_dict(_viewpoint_cam, gaussians, deform, iteration=None, warm_up
 
     return gaussian_dict, overwrite_attributes
 
-from pytorch3d.ops.knn import knn_points
 def query_nn(pts, n_neighbors=5, eps=1e-5):
+    from pytorch3d.ops.knn import knn_points
     dists, nn_ix, _ = knn_points(pts.unsqueeze(0), pts.unsqueeze(0), K=n_neighbors, return_sorted=True)
     nn_ix = nn_ix.squeeze(0)
     corss_dists = torch.cdist(pts[nn_ix], pts[nn_ix]) # B x N x N
@@ -153,7 +152,7 @@ def render_sets(dataset: ModelParams, hyper: ModelHiddenParams, iteration: int, 
     gaussians.use_isotropic = hyper.use_isotropic
     scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False)
     iteration = scene.loaded_iter
-    deform = SplatFieldsModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
+    deform = SplatFieldsModel(hyper, radius=scene.cameras_extent)
     deform.load_weights(dataset.model_path, iteration=iteration)
 
     view = scene.getTestCameras()[0]

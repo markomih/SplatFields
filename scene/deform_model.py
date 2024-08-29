@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from utils.time_utils import SplatFields
 import os
@@ -8,7 +7,7 @@ from utils.general_utils import get_expon_lr_func
 
 
 class SplatFieldsModel:
-    def __init__(self, hyper_args, is_blender=False, radius=None):
+    def __init__(self, hyper_args, radius=None):
         self.deform = SplatFields(radius=radius, **hyper_args.__dict__).cuda()
         pytorch_total_params = sum(p.numel() for p in self.deform.parameters())
         print('DEFORM #params:', pytorch_total_params/1_000_000, 'M')

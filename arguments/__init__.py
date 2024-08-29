@@ -76,7 +76,6 @@ class ModelParams(ParamGroup):
         self.pred_cam_names = ['cam_test']
 
         self.load2gpu_on_the_fly = False
-        self.is_blender = False
         self.is_6dof = False
         super().__init__(parser, "Loading Parameters", sentinel)
 

@@ -346,7 +346,7 @@ def render_sets(dataset: ModelParams, hyper: ModelHiddenParams, iteration: int, 
         gaussians = GaussianModel(dataset.sh_degree)
         gaussians.use_isotropic = hyper.use_isotropic
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False)
-        deform = SplatFieldsModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
+        deform = SplatFieldsModel(hyper, radius=scene.cameras_extent)
         deform.load_weights(dataset.model_path, iteration=iteration)
 
         bg_color = [1, 1, 1] if dataset.white_background else [0, 0, 0]

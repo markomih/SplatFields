@@ -109,7 +109,7 @@ def training(dataset, hyper, opt, pipe, testing_iterations, saving_iterations):
     gaussians.use_isotropic = hyper.use_isotropic
     ENABLE_G_OPT = not opt.disable_gaussian_opt #True
     scene = Scene(dataset, gaussians)
-    deform = SplatFieldsModel(hyper, dataset.is_blender, radius=scene.cameras_extent)
+    deform = SplatFieldsModel(hyper, radius=scene.cameras_extent)
     deform.train_setting(opt)
 
     gaussians.training_setup(opt)
