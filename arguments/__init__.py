@@ -114,7 +114,6 @@ class ModelHiddenParams(ParamGroup):
         self.color_model = 'linear' # mlp, hexplane, 'sh'
         self.opacity_model = 'nerf' # nerf or volsdf
         self.opacity_ones = False
-        self.use_deform_net = False
         self.opt_pts = False
         self.opt_pts_per_frame = False
         self.encoder_query_scale = 1.0
